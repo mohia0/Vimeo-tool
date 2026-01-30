@@ -1,228 +1,617 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Vimeo Embed Tool</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vimeo Embed Editor — For Behance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --bg: #191919;
+      --surface: #252525;
+      --surface-2: #2e2e2e;
+      --border: #3d3d3d;
+      --border-focus: #0057ff;
+      --text: #ffffff;
+      --text-soft: #b3b3b3;
+      --text-muted: #737373;
+      --accent: #0057ff;
+      --accent-hover: #3370ff;
+      --accent-bg: rgba(0, 87, 255, 0.15);
+      --radius: 8px;
+      --radius-sm: 6px;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      font-size: 14px;
-      color: #1a1a1a;
-      background: #f8f9fa;
       min-height: 100vh;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
     }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
-    h1 { font-size: 1.25rem; font-weight: 600; margin: 0 0 20px; }
-    label { display: block; font-weight: 500; margin-bottom: 6px; color: #374151; }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 14px;
-      margin-bottom: 16px;
+
+    .app {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 24px;
     }
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #1a73e8;
-      box-shadow: 0 0 0 2px rgba(26,115,232,.2);
+
+    .header {
+      margin-bottom: 28px;
     }
-    .toggles {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .toggle {
+
+    .header-title-wrap {
       display: flex;
       align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .header .behance-logo-img {
+      height: 1.35em;
+      width: auto;
+      vertical-align: middle;
+      object-fit: contain;
+      filter: invert(1);
+    }
+
+    .header p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      width: 100%;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 700px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .code-section {
+      margin-top: 24px;
+      width: 100%;
+    }
+
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 12px 16px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .input-wrap {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .input-wrap input {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .input-wrap input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input-wrap input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-bg);
+    }
+
+    .toggles-wrap {
+      padding: 16px 20px 20px;
+    }
+
+    .toggles-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
-      padding: 8px 10px;
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-soft);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
       cursor: pointer;
       user-select: none;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .toggle:hover { border-color: #d1d5db; }
-    .toggle.on { background: #eff6ff; border-color: #1a73e8; color: #1a73e8; }
-    .toggle input { display: none; }
-    .preview {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+
+    .toggle:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .toggle.on {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--accent-hover);
+    }
+
+    .toggle .icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+
+    .toggle.on .icon {
+      opacity: 1;
+    }
+
+    .toggle .icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .preview-wrap {
+      padding: 0;
+      background: #0a0a0a;
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .actual-size-btn {
+      padding: 6px 12px;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .actual-size-btn:hover:not(:disabled) {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .actual-size-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .actual-size-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.85);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .actual-size-modal.open {
+      display: flex;
+    }
+
+    .actual-size-modal .modal-inner {
+      position: relative;
+      width: 1080px;
+      max-width: 100%;
+      height: 630px;
+      max-height: calc(100vh - 80px);
+      background: #000;
+      border-radius: var(--radius);
       overflow: hidden;
-      aspect-ratio: 16/10;
-      margin-bottom: 20px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
     }
-    .preview iframe { width: 100%; height: 100%; border: 0; display: block; }
-    .preview-placeholder {
+
+    .actual-size-modal .modal-inner iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .actual-size-modal .modal-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      padding: 8px 16px;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .actual-size-modal .modal-close:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .preview {
+      aspect-ratio: 16/9;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100%;
-      color: #9ca3af;
-      font-size: 13px;
+      min-height: 200px;
     }
-    .code-section { position: relative; }
-    .code-section label { margin-bottom: 8px; }
-    .copy-btn {
+
+    .preview.empty .preview-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .preview:not(.empty) .preview-placeholder {
+      display: none;
+    }
+
+    .preview-placeholder svg {
+      width: 48px;
+      height: 48px;
+      opacity: 0.4;
+    }
+
+    .preview iframe {
       position: absolute;
-      top: 0;
-      right: 0;
-      padding: 6px 12px;
-      font-size: 12px;
-      background: #1a73e8;
-      color: #fff;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       border: 0;
-      border-radius: 6px;
-      cursor: pointer;
+      display: block;
     }
-    .copy-btn:hover { background: #1557b0; }
-    .copy-btn.copied { background: #0d9488; }
+
+    .preview.empty iframe {
+      display: none;
+    }
+
+    .code-wrap {
+      padding: 0;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-header span {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .copy-btn {
+      padding: 6px 12px;
+      font-family: "Instrument Sans", system-ui, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-soft);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .copy-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .copy-btn.copied {
+      background: #0a0;
+      border-color: #0a0;
+      color: #fff;
+    }
+
     .code-block {
-      background: #1e1e1e;
-      color: #d4d4d4;
-      padding: 14px 16px;
-      border-radius: 8px;
-      font-family: ui-monospace, monospace;
+      padding: 16px;
+      font-family: "JetBrains Mono", monospace;
       font-size: 12px;
-      line-height: 1.5;
+      line-height: 1.6;
+      color: #ffffff;
+      background: #0d0d0d;
       overflow-x: auto;
       white-space: pre-wrap;
       word-break: break-all;
+      min-height: 80px;
     }
-    .code-block .tag { color: #569cd6; }
-    .code-block .attr { color: #9cdcfe; }
-    .code-block .str { color: #ce9178; }
+
+    .code-block:empty::before {
+      content: "Embed code will appear here once you add a video.";
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>Vimeo Embed Tool</h1>
-    <label for="video">Video URL or ID</label>
-    <input type="text" id="video" placeholder="https://vimeo.com/1051366301 or 1051366301" value="1051366301" />
+  <div class="app">
+    <header class="header">
+      <div class="header-title-wrap">
+        <h1>Vimeo Embed Editor For</h1>
+        <img class="behance-logo-img" src="Behance_logo.svg.png" alt="Behance" width="120" height="32">
+      </div>
+      <p>Paste a link or ID, toggle options, and copy the embed code.</p>
+    </header>
 
-    <label>Toggles</label>
-    <div class="toggles" id="toggles"></div>
+    <div class="layout">
+      <aside class="panel">
+        <div class="panel-head">Video</div>
+        <div class="input-wrap">
+          <input type="text" id="input" placeholder="https://vimeo.com/1051366301 or 1051366301" autocomplete="off">
+        </div>
+        <div class="panel-head">Options</div>
+        <div class="toggles-wrap" id="toggles"></div>
+      </aside>
 
-    <label>Preview</label>
-    <div class="preview" id="preview">
-      <div class="preview-placeholder" id="placeholder">Enter a Vimeo URL or ID</div>
-      <iframe id="iframe" style="display:none;"></iframe>
+      <main>
+        <div class="panel preview-wrap">
+          <div class="panel-head preview-head">
+            <span>Preview</span>
+            <button type="button" class="actual-size-btn" id="actualSizeBtn" disabled title="View at 1080×630">Actual size (1080×630)</button>
+          </div>
+          <div class="preview" id="preview">
+            <div class="preview-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+              Add a Vimeo URL or video ID
+            </div>
+            <iframe id="previewIframe" style="display:none;"></iframe>
+          </div>
+        </div>
+      </main>
     </div>
 
     <div class="code-section">
-      <label>Embed code</label>
-      <button type="button" class="copy-btn" id="copyBtn" style="display:none;">Copy</button>
-      <div class="code-block" id="code"></div>
+      <div class="panel code-wrap">
+        <div class="code-header">
+          <span>Embed code</span>
+          <button type="button" class="copy-btn" id="copyBtn">Copy</button>
+        </div>
+        <pre class="code-block" id="code"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="actual-size-modal" id="actualSizeModal" aria-hidden="true">
+    <div class="modal-inner">
+      <iframe id="actualSizeIframe" title="Video at actual size"></iframe>
+      <button type="button" class="modal-close" id="actualSizeClose">Close</button>
     </div>
   </div>
 
   <script>
-    const VIDEO_ID_REGEX = /(?:vimeo\.com\/(?:video\/)?|player\.vimeo\.com\/video\/)(\d+)(?:\?.*)?/i;
+    const ICONS = {
+      autoplay: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7L8 5z"/></svg>',
+      loop: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>',
+      muted: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>',
+      controls: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M8 9v6M12 9v6M16 9v6"/></svg>',
+      fullscreen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>',
+    };
 
     const OPTIONS = [
-      { key: 'badge', label: 'Badge', default: false },
-      { key: 'autopause', label: 'Autopause', default: false },
-      { key: 'autoplay', label: 'Autoplay', default: true },
-      { key: 'loop', label: 'Loop', default: true },
-      { key: 'muted', label: 'Muted', default: true },
-      { key: 'controls', label: 'Controls', default: false },
-      { key: 'fullscreen', label: 'Fullscreen', default: true },
-      { key: 'byline', label: 'Byline', default: false },
-      { key: 'title', label: 'Title', default: false },
-      { key: 'portrait', label: 'Portrait', default: false },
+      { key: 'autoplay', label: 'Autoplay' },
+      { key: 'loop', label: 'Loop' },
+      { key: 'muted', label: 'Muted' },
+      { key: 'controls', label: 'Controls' },
+      { key: 'fullscreen', label: 'Fullscreen' },
     ];
 
-    function parseVideoId(input) {
-      if (!input || !input.trim()) return null;
-      const trimmed = input.trim();
-      const match = trimmed.match(VIDEO_ID_REGEX);
-      if (match) return match[1];
-      if (/^\d+$/.test(trimmed)) return trimmed;
-      return null;
+    const state = { videoId: '', hash: '', options: {} };
+    OPTIONS.forEach(o => { state.options[o.key] = false; });
+    state.options.autoplay = true;
+    state.options.loop = true;
+    state.options.muted = true;
+    state.options.controls = false;
+    state.options.fullscreen = true;
+
+    function parseInput(val) {
+      val = (val || '').trim();
+      if (!val) return { videoId: '', hash: '' };
+      let videoId = '';
+      let hash = '';
+      if (/^\d+$/.test(val)) {
+        videoId = val;
+      } else {
+        try {
+          const u = new URL(val.startsWith('http') ? val : 'https://vimeo.com/' + val);
+          const path = u.pathname.replace(/\/$/, '');
+          const m = path.match(/\/video\/(\d+)/) || path.match(/\/(\d+)/);
+          if (m) videoId = m[1];
+          hash = u.searchParams.get('h') || '';
+        } catch (_) {
+          const m = val.match(/(?:video\/)?(\d+)/);
+          if (m) videoId = m[1];
+        }
+      }
+      return { videoId, hash };
     }
 
-    function buildSrc(videoId, state) {
-      if (!videoId) return '';
-      const base = `https://player.vimeo.com/video/${videoId}`;
+    function buildSrc() {
+      if (!state.videoId) return '';
+      const base = 'https://player.vimeo.com/video/' + state.videoId;
       const params = new URLSearchParams();
       OPTIONS.forEach(({ key }) => {
-        const v = state[key] ? '1' : '0';
-        params.set(key, v);
+        params.set(key, state.options[key] ? '1' : '0');
       });
-      return `${base}?${params.toString()}`;
+      if (state.hash) params.set('h', state.hash);
+      return base + '?' + params.toString();
     }
 
-    function renderCode(src) {
-      const el = document.getElementById('code');
-      const copyBtn = document.getElementById('copyBtn');
-      if (!src) { el.textContent = ''; copyBtn.style.display = 'none'; return; }
-      const raw = `<iframe src="${src}" style="width:100%;height:100%;" width="1080" height="630" frameborder="0" allow="autoplay; picture-in-picture" allowfullscreen sandbox="allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>`;
-      el.textContent = raw;
-      copyBtn.style.display = 'block';
+    function buildIframeTag() {
+      const src = buildSrc();
+      if (!src) return '';
+      const allow = 'autoplay; picture-in-picture; fullscreen';
+      return `<iframe src="${src}" width="1080" height="630" frameborder="0" allow="${allow}" allowfullscreen></iframe>`;
     }
 
-    document.getElementById('copyBtn').addEventListener('click', () => {
-      const text = document.getElementById('code').textContent;
-      if (!text) return;
-      navigator.clipboard.writeText(text).then(() => {
-        const btn = document.getElementById('copyBtn');
-        btn.textContent = 'Copied!';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
-      });
-    });
+    function render() {
+      const preview = document.getElementById('preview');
+      const iframe = document.getElementById('previewIframe');
+      const codeEl = document.getElementById('code');
+      const actualSizeBtn = document.getElementById('actualSizeBtn');
+      const src = buildSrc();
 
-    function update() {
-      const input = document.getElementById('video').value;
-      const videoId = parseVideoId(input);
-      const iframe = document.getElementById('iframe');
-      const placeholder = document.getElementById('placeholder');
-
-      if (!videoId) {
+      if (!state.videoId) {
+        preview.classList.add('empty');
         iframe.style.display = 'none';
-        placeholder.style.display = 'flex';
-        placeholder.textContent = 'Enter a Vimeo URL or ID';
-        renderCode('');
+        iframe.removeAttribute('src');
+        codeEl.textContent = '';
+        if (actualSizeBtn) actualSizeBtn.disabled = true;
         return;
       }
 
-      const src = buildSrc(videoId, state);
+      preview.classList.remove('empty');
       iframe.src = src;
       iframe.style.display = 'block';
-      placeholder.style.display = 'none';
-      renderCode(src);
+      codeEl.textContent = buildIframeTag();
+      if (actualSizeBtn) actualSizeBtn.disabled = false;
     }
 
-    const state = {};
-    OPTIONS.forEach(o => { state[o.key] = o.default; });
-
-    const togglesEl = document.getElementById('toggles');
-    OPTIONS.forEach(({ key, label }) => {
-      const div = document.createElement('div');
-      div.className = 'toggle' + (state[key] ? ' on' : '');
-      div.setAttribute('role', 'button');
-      div.setAttribute('tabindex', '0');
-      div.innerHTML = `<input type="checkbox" id="t-${key}" ${state[key] ? 'checked' : ''} /><span>${label}</span>`;
-      div.addEventListener('click', () => {
-        state[key] = !state[key];
-        div.classList.toggle('on', state[key]);
-        div.querySelector('input').checked = state[key];
-        update();
+    function setupToggles() {
+      const container = document.getElementById('toggles');
+      const row = document.createElement('div');
+      row.className = 'toggles-row';
+      OPTIONS.forEach(({ key, label }) => {
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.className = 'toggle' + (state.options[key] ? ' on' : '');
+        el.innerHTML = '<span class="icon">' + (ICONS[key] || '') + '</span><span>' + label + '</span>';
+        el.addEventListener('click', () => {
+          state.options[key] = !state.options[key];
+          el.classList.toggle('on', state.options[key]);
+          render();
+        });
+        row.appendChild(el);
       });
-      div.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); div.click(); } });
-      togglesEl.appendChild(div);
+      container.appendChild(row);
+    }
+
+    document.getElementById('input').addEventListener('input', (e) => {
+      const { videoId, hash } = parseInput(e.target.value);
+      state.videoId = videoId;
+      state.hash = hash;
+      render();
     });
 
-    document.getElementById('video').addEventListener('input', update);
-    document.getElementById('video').addEventListener('paste', () => setTimeout(update, 0));
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const code = document.getElementById('code').textContent;
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
 
-    update();
+    const actualSizeBtn = document.getElementById('actualSizeBtn');
+    const actualSizeModal = document.getElementById('actualSizeModal');
+    const actualSizeIframe = document.getElementById('actualSizeIframe');
+    const actualSizeClose = document.getElementById('actualSizeClose');
+
+    if (actualSizeBtn) {
+      actualSizeBtn.addEventListener('click', () => {
+        const src = buildSrc();
+        if (!src) return;
+        actualSizeIframe.src = src;
+        actualSizeModal.classList.add('open');
+        actualSizeModal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    if (actualSizeClose) {
+      actualSizeClose.addEventListener('click', () => {
+        actualSizeModal.classList.remove('open');
+        actualSizeModal.setAttribute('aria-hidden', 'true');
+        actualSizeIframe.removeAttribute('src');
+      });
+    }
+
+    if (actualSizeModal) {
+      actualSizeModal.addEventListener('click', (e) => {
+        if (e.target === actualSizeModal) {
+          actualSizeModal.classList.remove('open');
+          actualSizeModal.setAttribute('aria-hidden', 'true');
+          actualSizeIframe.removeAttribute('src');
+        }
+      });
+    }
+
+    setupToggles();
+    render();
   </script>
 </body>
 </html>
