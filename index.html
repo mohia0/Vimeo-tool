@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vimeo Embed Tool</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --text: #e5e5e5;
+      --muted: #737373;
+      --accent: #00adef;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+    h1 { font-size: 14px; font-weight: 600; margin: 0 0 20px; color: var(--muted); letter-spacing: 0.02em; }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 6px;
+      font: inherit;
+      margin-bottom: 16px;
+    }
+    input[type="text"]::placeholder { color: var(--muted); }
+    input[type="text"]:focus { outline: none; border-color: var(--accent); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle:hover { border-color: var(--muted); }
+    .toggle.on { border-color: var(--accent); background: rgba(0,173,239,0.08); }
+    .toggle span { flex: 1; }
+    .toggle .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+    }
+    .toggle.on .dot { background: var(--accent); }
+    .preview {
+      aspect-ratio: 16/9;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .preview.empty { display: flex; align-items: center; justify-content: center; color: var(--muted); }
+    .preview iframe { width: 100%; height: 100%; border: 0; display: block; }
+    .view-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .view-section h2 { font-size: 11px; font-weight: 600; margin: 0; padding: 10px 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
+    pre {
+      margin: 0;
+      padding: 12px;
+      font: inherit;
+      font-size: 11px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: var(--muted);
+    }
+    .copy-btn {
+      position: absolute;
+      top: 36px; right: 12px;
+      padding: 4px 8px;
+      font: inherit;
+      font-size: 11px;
+      background: var(--border);
+      border: none;
+      color: var(--text);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .copy-btn:hover { background: var(--accent); color: var(--bg); }
+    .view-section { position: relative; }
+    .copy-btn.copied { background: #22c55e; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Vimeo Embed</h1>
+    <input type="text" id="input" placeholder="Vimeo URL or video ID (e.g. 1051366301 or https://vimeo.com/1051366301)" autocomplete="off">
+    <div class="grid" id="toggles"></div>
+    <div class="preview" id="preview">
+      <span>Enter a Vimeo URL or ID</span>
+    </div>
+    <div class="view-section">
+      <h2>Embed code</h2>
+      <button type="button" class="copy-btn" id="copyBtn">Copy</button>
+      <pre id="code"></pre>
+    </div>
+  </div>
+  <script>
+    const OPTIONS = [
+      { key: 'badge', label: 'Badge' },
+      { key: 'autopause', label: 'Autopause' },
+      { key: 'autoplay', label: 'Autoplay' },
+      { key: 'loop', label: 'Loop' },
+      { key: 'muted', label: 'Muted' },
+      { key: 'controls', label: 'Controls' },
+      { key: 'fullscreen', label: 'Fullscreen' },
+      { key: 'byline', label: 'Byline' },
+      { key: 'title', label: 'Title' },
+      { key: 'portrait', label: 'Portrait' },
+      { key: 'pip', label: 'Picture-in-picture' },
+      { key: 'background', label: 'Background mode' },
+    ];
+
+    const state = { videoId: '', hash: '', options: {} };
+    OPTIONS.forEach(o => { state.options[o.key] = false; });
+    state.options.badge = false;
+    state.options.autopause = false;
+    state.options.autoplay = true;
+    state.options.loop = true;
+    state.options.muted = true;
+    state.options.controls = false;
+    state.options.fullscreen = true;
+
+    function parseInput(val) {
+      val = (val || '').trim();
+      if (!val) return { videoId: '', hash: '' };
+      let videoId = '';
+      let hash = '';
+      const numOnly = /^\d+$/.test(val);
+      if (numOnly) {
+        videoId = val;
+      } else {
+        try {
+          const u = new URL(val.startsWith('http') ? val : 'https://vimeo.com/' + val);
+          const path = u.pathname.replace(/\/$/, '');
+          const m = path.match(/\/video\/(\d+)/) || path.match(/\/(\d+)/);
+          if (m) videoId = m[1];
+          hash = u.searchParams.get('h') || '';
+        } catch (_) {
+          const m = val.match(/(?:video\/)?(\d+)/);
+          if (m) videoId = m[1];
+        }
+      }
+      return { videoId, hash };
+    }
+
+    function buildSrc() {
+      if (!state.videoId) return '';
+      const base = 'https://player.vimeo.com/video/' + state.videoId;
+      const params = new URLSearchParams();
+      OPTIONS.forEach(({ key }) => {
+        const v = state.options[key];
+        params.set(key, v ? '1' : '0');
+      });
+      if (state.hash) params.set('h', state.hash);
+      return base + '?' + params.toString();
+    }
+
+    function buildIframeTag() {
+      const src = buildSrc();
+      if (!src) return '';
+      const allow = 'autoplay; picture-in-picture; fullscreen';
+      return `<iframe src="${src}" width="1080" height="630" frameborder="0" allow="${allow}" allowfullscreen></iframe>`;
+    }
+
+    function render() {
+      const preview = document.getElementById('preview');
+      const codeEl = document.getElementById('code');
+      const src = buildSrc();
+      if (!state.videoId) {
+        preview.classList.add('empty');
+        preview.innerHTML = '<span>Enter a Vimeo URL or ID</span>';
+        codeEl.textContent = '';
+        return;
+      }
+      preview.classList.remove('empty');
+      let iframe = preview.querySelector('iframe');
+      if (iframe) iframe.src = src;
+      else preview.innerHTML = '<iframe src="' + src + '" allow="autoplay; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+      codeEl.textContent = buildIframeTag();
+    }
+
+    function setupToggles() {
+      const container = document.getElementById('toggles');
+      container.innerHTML = '';
+      OPTIONS.forEach(({ key, label }) => {
+        const el = document.createElement('label');
+        el.className = 'toggle' + (state.options[key] ? ' on' : '');
+        el.innerHTML = '<span>' + label + '</span><span class="dot"></span>';
+        el.addEventListener('click', () => {
+          state.options[key] = !state.options[key];
+          el.classList.toggle('on', state.options[key]);
+          render();
+        });
+        container.appendChild(el);
+      });
+    }
+
+    document.getElementById('input').addEventListener('input', (e) => {
+      const { videoId, hash } = parseInput(e.target.value);
+      state.videoId = videoId;
+      state.hash = hash;
+      render();
+    });
+
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const code = document.getElementById('code').textContent;
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+
+    setupToggles();
+    render();
+  </script>
+</body>
+</html>
