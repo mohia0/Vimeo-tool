@@ -54,6 +54,13 @@
       flex-wrap: wrap;
     }
 
+    .header .vimeo-logo-img {
+      height: 1.7em;
+      width: auto;
+      vertical-align: middle;
+      object-fit: contain;
+    }
+
     .header h1 {
       font-size: 1.5rem;
       font-weight: 700;
@@ -185,7 +192,7 @@
       height: 38px;
       flex-shrink: 0;
       background: var(--border);
-      margin: 0 8px;
+      margin: 0 25px;
     }
 
     .toggles-row {
@@ -332,7 +339,7 @@
       width: 18px;
       height: 18px;
       padding: 0;
-      margin-left: 4px;
+      margin-left: 18px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -630,7 +637,7 @@
     }
 
     .app-footer {
-      margin-top: 28px;
+      margin-top: 80px;
       padding-top: 16px;
       border-top: 1px solid var(--border);
       text-align: center;
@@ -640,11 +647,13 @@
 
     .app-footer a {
       color: var(--accent);
-      text-decoration: none;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 600;
     }
 
     .app-footer a:hover {
-      text-decoration: underline;
+      color: var(--accent-hover);
     }
   </style>
 </head>
@@ -652,7 +661,8 @@
   <div class="app">
     <header class="header">
       <div class="header-title-wrap">
-        <h1>Vimeo Embed Tool</h1>
+        <img class="vimeo-logo-img" src="vimeo-logo.svg" alt="Vimeo" width="80" height="24">
+        <h1>Embed Tool</h1>
         <span class="header-sep">for</span>
         <img class="behance-logo-img" src="Behance_logo.svg.png" alt="Behance" width="120" height="32">
       </div>
@@ -729,7 +739,7 @@
   </div>
 
   <footer class="app-footer">
-    Made with love by <strong>MOHI HASSAN</strong> · <a href="https://mohihassan.com" target="_blank" rel="noopener noreferrer">mohihassan.com</a>
+    Made with love by <a href="https://mohihassan.com" target="_blank" rel="noopener noreferrer" class="footer-name">MOHI HASSAN</a>
   </footer>
 
   <div class="actual-size-modal" id="actualSizeModal" aria-hidden="true">
