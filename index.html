@@ -91,7 +91,23 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 24px;
-      align-items: start;
+      align-items: stretch;
+    }
+
+    .layout > aside.panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .layout > aside.panel .panel-head,
+    .layout > aside.panel .input-wrap {
+      flex-shrink: 0;
+    }
+
+    .layout > aside.panel .toggles-wrap {
+      flex: 1;
+      min-height: 0;
     }
 
     @media (max-width: 700px) {
@@ -296,9 +312,81 @@
       box-sizing: border-box;
     }
 
+    .size-fields input::-webkit-outer-spin-button,
+    .size-fields input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .size-fields input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
     .size-fields input:focus {
       outline: none;
       border-color: var(--accent);
+    }
+
+    .reset-size-btn {
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      margin-left: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: color 0.15s, border-color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .reset-size-btn:hover {
+      color: var(--accent-hover);
+      border-color: var(--accent);
+    }
+
+    .reset-size-btn svg {
+      width: 10px;
+      height: 10px;
+    }
+
+    .input-error {
+      font-size: 0.7rem;
+      color: #f87171;
+      margin-top: 6px;
+      display: none;
+    }
+
+    .input-error.visible {
+      display: block;
+    }
+
+    .input-wrap.has-error input {
+      border-color: #f87171;
+    }
+
+    .preview-loading {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .preview.loading .preview-loading {
+      display: flex;
+    }
+
+    .preview.loading .preview-placeholder {
+      display: none;
     }
 
     .size-code-toggle {
@@ -540,6 +628,24 @@
       content: "Embed code will appear here once you add a video.";
       color: var(--text-muted);
     }
+
+    .app-footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .app-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .app-footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -547,7 +653,7 @@
     <header class="header">
       <div class="header-title-wrap">
         <h1>Vimeo Embed Tool</h1>
-        <span class="header-sep">/</span>
+        <span class="header-sep">for</span>
         <img class="behance-logo-img" src="Behance_logo.svg.png" alt="Behance" width="120" height="32">
       </div>
       <p>Paste a link or ID, toggle options, and copy the embed code.</p>
@@ -556,8 +662,9 @@
     <div class="layout">
       <aside class="panel">
         <div class="panel-head">Video</div>
-        <div class="input-wrap">
-          <input type="text" id="input" placeholder="https://vimeo.com/1051366301 or 1051366301" autocomplete="off">
+        <div class="input-wrap" id="inputWrap">
+          <input type="text" id="input" placeholder="https://vimeo.com/1051366301 or 1051366301" autocomplete="off" aria-describedby="inputError">
+          <p class="input-error" id="inputError" role="alert">Enter a valid Vimeo URL or video ID.</p>
         </div>
         <div class="panel-head">Options</div>
         <div class="toggles-wrap">
@@ -569,7 +676,10 @@
                 <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11V7a5 5 0 0110 0v4M5 11h14a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
                 <svg class="unlock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a1 1 0 001-1v-7a1 1 0 00-1-1H5a1 1 0 00-1 1v7a1 1 0 001 1z"/></svg>
               </button>
-              <label>Size</label>
+              <label>Lock</label>
+              <button type="button" class="reset-size-btn" id="resetSizeBtn" title="Reset size to 1080×630" aria-label="Reset size">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              </button>
             </div>
             <div class="size-fields">
               <div class="size-group">
@@ -598,8 +708,9 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
               </svg>
-              Add a Vimeo URL or video ID
+              <span class="placeholder-text">Add a Vimeo URL or video ID</span>
             </div>
+            <div class="preview-loading" aria-live="polite">Loading…</div>
             <iframe id="previewIframe" style="display:none;"></iframe>
           </div>
         </div>
@@ -616,6 +727,10 @@
       </div>
     </div>
   </div>
+
+  <footer class="app-footer">
+    Made with love by <strong>MOHI HASSAN</strong> · <a href="https://mohihassan.com" target="_blank" rel="noopener noreferrer">mohihassan.com</a>
+  </footer>
 
   <div class="actual-size-modal" id="actualSizeModal" aria-hidden="true">
     <div class="modal-inner" id="actualSizeModalInner">
@@ -710,6 +825,7 @@
 
       if (!state.videoId) {
         preview.classList.add('empty');
+        preview.classList.remove('loading');
         iframe.style.display = 'none';
         iframe.removeAttribute('src');
         codeEl.textContent = '';
@@ -721,14 +837,25 @@
       }
 
       preview.classList.remove('empty');
-      iframe.src = src;
-      iframe.style.display = 'block';
+      preview.classList.add('loading');
+      iframe.style.display = 'none';
+      iframe.removeAttribute('src');
       codeEl.textContent = buildIframeTag();
       if (actualSizeBtn) {
         actualSizeBtn.disabled = false;
         actualSizeBtn.textContent = 'Actual size (' + state.width + '×' + state.height + ')';
         actualSizeBtn.title = 'View at ' + state.width + '×' + state.height;
       }
+      iframe.onload = function() {
+        preview.classList.remove('loading');
+        iframe.style.display = 'block';
+        iframe.onload = null;
+      };
+      iframe.onerror = function() {
+        preview.classList.remove('loading');
+        iframe.style.display = 'block';
+      };
+      iframe.src = src;
     }
 
     function setupToggles() {
@@ -756,10 +883,22 @@
       container.appendChild(row2);
     }
 
-    document.getElementById('input').addEventListener('input', (e) => {
-      const { videoId, hash } = parseInput(e.target.value);
+    const inputEl = document.getElementById('input');
+    const inputWrap = document.getElementById('inputWrap');
+    const inputError = document.getElementById('inputError');
+
+    inputEl.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      const { videoId, hash } = parseInput(val);
       state.videoId = videoId;
       state.hash = hash;
+      if (val && !videoId) {
+        inputWrap.classList.add('has-error');
+        inputError.classList.add('visible');
+      } else {
+        inputWrap.classList.remove('has-error');
+        inputError.classList.remove('visible');
+      }
       render();
     });
 
@@ -785,33 +924,43 @@
 
     if (embedWidthEl) {
       embedWidthEl.addEventListener('input', () => {
+        const w = clampWidth(embedWidthEl.value);
+        state.width = w;
         if (state.lockAspect) {
-          state.width = clampWidth(embedWidthEl.value);
-          state.height = heightFromWidth(state.width);
-          embedWidthEl.value = state.width;
-          embedHeightEl.value = state.height;
-        } else {
-          state.width = clampWidth(embedWidthEl.value);
-          embedWidthEl.value = state.width;
+          state.height = heightFromWidth(w);
+          if (embedHeightEl) embedHeightEl.value = state.height;
         }
         render();
       });
-      embedWidthEl.addEventListener('change', () => { syncSizeFromInputs(); });
+      embedWidthEl.addEventListener('change', () => {
+        state.width = clampWidth(embedWidthEl.value);
+        embedWidthEl.value = state.width;
+        if (state.lockAspect) {
+          state.height = heightFromWidth(state.width);
+          if (embedHeightEl) embedHeightEl.value = state.height;
+        }
+        render();
+      });
     }
     if (embedHeightEl) {
       embedHeightEl.addEventListener('input', () => {
+        const h = clampHeight(embedHeightEl.value);
+        state.height = h;
         if (state.lockAspect) {
-          state.height = clampHeight(embedHeightEl.value);
-          state.width = widthFromHeight(state.height);
-          embedHeightEl.value = state.height;
-          embedWidthEl.value = state.width;
-        } else {
-          state.height = clampHeight(embedHeightEl.value);
-          embedHeightEl.value = state.height;
+          state.width = widthFromHeight(h);
+          if (embedWidthEl) embedWidthEl.value = state.width;
         }
         render();
       });
-      embedHeightEl.addEventListener('change', () => { syncSizeFromInputs(); });
+      embedHeightEl.addEventListener('change', () => {
+        state.height = clampHeight(embedHeightEl.value);
+        embedHeightEl.value = state.height;
+        if (state.lockAspect) {
+          state.width = widthFromHeight(state.height);
+          if (embedWidthEl) embedWidthEl.value = state.width;
+        }
+        render();
+      });
     }
 
     if (lockAspectBtn) {
@@ -826,6 +975,27 @@
           unlockIcon.style.display = state.lockAspect ? 'none' : '';
         }
         lockAspectBtn.title = state.lockAspect ? 'Lock 16:9 aspect ratio' : 'Unlock aspect ratio';
+        render();
+      });
+    }
+
+    const resetSizeBtn = document.getElementById('resetSizeBtn');
+    if (resetSizeBtn) {
+      resetSizeBtn.addEventListener('click', () => {
+        state.width = 1080;
+        state.height = 630;
+        state.lockAspect = true;
+        if (embedWidthEl) embedWidthEl.value = state.width;
+        if (embedHeightEl) embedHeightEl.value = state.height;
+        if (lockAspectBtn) {
+          lockAspectBtn.classList.add('on');
+          lockAspectBtn.setAttribute('aria-pressed', 'true');
+          const lockIcon = lockAspectBtn.querySelector('.lock-icon');
+          const unlockIcon = lockAspectBtn.querySelector('.unlock-icon');
+          if (lockIcon) lockIcon.style.display = '';
+          if (unlockIcon) unlockIcon.style.display = 'none';
+          lockAspectBtn.title = 'Lock 16:9 aspect ratio';
+        }
         render();
       });
     }
