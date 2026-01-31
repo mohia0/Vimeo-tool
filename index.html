@@ -150,7 +150,7 @@
     }
 
     .toggles-wrap {
-      padding: 10px 14px 12px;
+      padding: 8px 12px 10px;
       display: flex;
       gap: 0;
       align-items: center;
@@ -160,31 +160,31 @@
     .toggles-side {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       flex-shrink: 0;
     }
 
     .options-sep {
       width: 1px;
-      height: 44px;
+      height: 38px;
       flex-shrink: 0;
       background: var(--border);
-      margin: 0 12px;
+      margin: 0 8px;
     }
 
     .toggles-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 4px;
       align-items: center;
     }
 
     .toggle {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 6px 10px;
-      font-size: 0.8rem;
+      gap: 4px;
+      padding: 5px 8px;
+      font-size: 0.78rem;
       font-weight: 500;
       color: var(--text-soft);
       background: var(--surface-2);
@@ -207,8 +207,8 @@
     }
 
     .toggle .icon {
-      width: 14px;
-      height: 14px;
+      width: 13px;
+      height: 13px;
       flex-shrink: 0;
       opacity: 0.9;
     }
@@ -216,7 +216,7 @@
     .size-controls {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
       flex-shrink: 0;
       min-width: 0;
     }
@@ -224,7 +224,7 @@
     .size-controls .size-header {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
     }
 
     .size-controls label {
@@ -236,8 +236,8 @@
     }
 
     .lock-btn {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       padding: 0;
       display: flex;
       align-items: center;
@@ -262,8 +262,8 @@
     }
 
     .lock-btn svg {
-      width: 12px;
-      height: 12px;
+      width: 11px;
+      height: 11px;
     }
 
     .size-fields {
@@ -280,18 +280,20 @@
 
     .size-fields .size-group label {
       font-size: 0.6rem;
-      width: 28px;
+      width: 16px;
     }
 
     .size-fields input {
-      width: 52px;
-      padding: 5px 6px;
+      width: 56px;
+      min-width: 56px;
+      padding: 4px 5px;
       font-family: "JetBrains Mono", monospace;
       font-size: 11px;
       color: var(--text);
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
+      box-sizing: border-box;
     }
 
     .size-fields input:focus {
@@ -300,8 +302,8 @@
     }
 
     .size-code-toggle {
-      padding: 4px 8px;
-      font-size: 0.65rem;
+      padding: 3px 6px;
+      font-size: 0.62rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.03em;
