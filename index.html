@@ -150,22 +150,41 @@
     }
 
     .toggles-wrap {
-      padding: 16px 20px 20px;
+      padding: 10px 14px 12px;
+      display: flex;
+      gap: 0;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+
+    .toggles-side {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .options-sep {
+      width: 1px;
+      height: 44px;
+      flex-shrink: 0;
+      background: var(--border);
+      margin: 0 12px;
     }
 
     .toggles-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 5px;
       align-items: center;
     }
 
     .toggle {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      font-size: 0.9rem;
+      gap: 5px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
       font-weight: 500;
       color: var(--text-soft);
       background: var(--surface-2);
@@ -188,10 +207,121 @@
     }
 
     .toggle .icon {
-      width: 18px;
-      height: 18px;
+      width: 14px;
+      height: 14px;
       flex-shrink: 0;
       opacity: 0.9;
+    }
+
+    .size-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+      min-width: 0;
+    }
+
+    .size-controls .size-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .size-controls label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .lock-btn {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .lock-btn:hover {
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .lock-btn.on {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--accent-hover);
+    }
+
+    .lock-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .size-fields {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+
+    .size-fields .size-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .size-fields .size-group label {
+      font-size: 0.6rem;
+      width: 28px;
+    }
+
+    .size-fields input {
+      width: 52px;
+      padding: 5px 6px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .size-fields input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .size-code-toggle {
+      padding: 4px 8px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .size-code-toggle:hover {
+      color: var(--text);
+    }
+
+    .size-code-toggle.on {
+      background: var(--accent-bg);
+      border-color: var(--accent);
+      color: var(--accent-hover);
     }
 
     .toggle.on .icon {
@@ -257,9 +387,7 @@
 
     .actual-size-modal .modal-inner {
       position: relative;
-      width: 1080px;
       max-width: 100%;
-      height: 630px;
       max-height: calc(100vh - 80px);
       background: #000;
       border-radius: var(--radius);
@@ -276,23 +404,31 @@
 
     .actual-size-modal .modal-close {
       position: absolute;
-      top: -40px;
-      right: 0;
-      padding: 8px 16px;
-      font-family: "Instrument Sans", system-ui, sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
+      top: 8px;
+      right: 8px;
+      z-index: 2;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--text);
-      background: var(--surface);
+      background: rgba(0, 0, 0, 0.6);
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+      border-radius: 50%;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.15s, color 0.15s;
     }
 
     .actual-size-modal .modal-close:hover {
       background: var(--accent);
       border-color: var(--accent);
+    }
+
+    .actual-size-modal .modal-close svg {
+      width: 16px;
+      height: 16px;
     }
 
     .preview {
@@ -422,14 +558,38 @@
           <input type="text" id="input" placeholder="https://vimeo.com/1051366301 or 1051366301" autocomplete="off">
         </div>
         <div class="panel-head">Options</div>
-        <div class="toggles-wrap" id="toggles"></div>
+        <div class="toggles-wrap">
+          <div class="toggles-side" id="toggles"></div>
+          <div class="options-sep" aria-hidden="true"></div>
+          <div class="size-controls">
+            <div class="size-header">
+              <button type="button" class="lock-btn on" id="lockAspectBtn" title="Lock 16:9 aspect ratio" aria-pressed="true">
+                <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11V7a5 5 0 0110 0v4M5 11h14a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
+                <svg class="unlock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a1 1 0 001-1v-7a1 1 0 00-1-1H5a1 1 0 00-1 1v7a1 1 0 001 1z"/></svg>
+              </button>
+              <label>Size</label>
+            </div>
+            <div class="size-fields">
+              <div class="size-group">
+                <label for="embedWidth">W</label>
+                <input type="number" id="embedWidth" min="320" max="3840" step="1" value="1080">
+              </div>
+              <span style="color:var(--text-muted);font-size:10px;">×</span>
+              <div class="size-group">
+                <label for="embedHeight">H</label>
+                <input type="number" id="embedHeight" min="180" max="2160" step="1" value="630">
+              </div>
+            </div>
+            <button type="button" class="size-code-toggle on" id="sizeInCodeBtn" title="Include width & height in embed code (off = responsive 100%)">In code</button>
+          </div>
+        </div>
       </aside>
 
       <main>
         <div class="panel preview-wrap">
           <div class="panel-head preview-head">
             <span>Preview</span>
-            <button type="button" class="actual-size-btn" id="actualSizeBtn" disabled title="View at 1080×630">Actual size (1080×630)</button>
+            <button type="button" class="actual-size-btn" id="actualSizeBtn" disabled title="View at actual size">Actual size</button>
           </div>
           <div class="preview" id="preview">
             <div class="preview-placeholder">
@@ -456,9 +616,11 @@
   </div>
 
   <div class="actual-size-modal" id="actualSizeModal" aria-hidden="true">
-    <div class="modal-inner">
+    <div class="modal-inner" id="actualSizeModalInner">
       <iframe id="actualSizeIframe" title="Video at actual size"></iframe>
-      <button type="button" class="modal-close" id="actualSizeClose">Close</button>
+      <button type="button" class="modal-close" id="actualSizeClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
     </div>
   </div>
 
@@ -479,13 +641,20 @@
       { key: 'fullscreen', label: 'Fullscreen' },
     ];
 
-    const state = { videoId: '', hash: '', options: {} };
+    const state = { videoId: '', hash: '', options: {}, width: 1080, height: 630, lockAspect: true, includeSizeInCode: true };
     OPTIONS.forEach(o => { state.options[o.key] = false; });
     state.options.autoplay = true;
     state.options.loop = true;
     state.options.muted = true;
     state.options.controls = false;
     state.options.fullscreen = true;
+
+    const MIN_W = 320, MAX_W = 3840, MIN_H = 180, MAX_H = 2160;
+    const RATIO = 16 / 9;
+    function clampWidth(v) { return Math.min(MAX_W, Math.max(MIN_W, parseInt(v, 10) || MIN_W)); }
+    function clampHeight(v) { return Math.min(MAX_H, Math.max(MIN_H, parseInt(v, 10) || MIN_H)); }
+    function heightFromWidth(w) { return clampHeight(Math.round(w / RATIO)); }
+    function widthFromHeight(h) { return clampWidth(Math.round(h * RATIO)); }
 
     function parseInput(val) {
       val = (val || '').trim();
@@ -524,7 +693,10 @@
       const src = buildSrc();
       if (!src) return '';
       const allow = 'autoplay; picture-in-picture; fullscreen';
-      return `<iframe src="${src}" width="1080" height="630" frameborder="0" allow="${allow}" allowfullscreen></iframe>`;
+      if (state.includeSizeInCode) {
+        return `<iframe src="${src}" width="${state.width}" height="${state.height}" frameborder="0" allow="${allow}" allowfullscreen></iframe>`;
+      }
+      return `<iframe src="${src}" style="width:100%;height:100%;" frameborder="0" allow="${allow}" allowfullscreen></iframe>`;
     }
 
     function render() {
@@ -539,7 +711,10 @@
         iframe.style.display = 'none';
         iframe.removeAttribute('src');
         codeEl.textContent = '';
-        if (actualSizeBtn) actualSizeBtn.disabled = true;
+        if (actualSizeBtn) {
+          actualSizeBtn.disabled = true;
+          actualSizeBtn.textContent = 'Actual size';
+        }
         return;
       }
 
@@ -547,14 +722,23 @@
       iframe.src = src;
       iframe.style.display = 'block';
       codeEl.textContent = buildIframeTag();
-      if (actualSizeBtn) actualSizeBtn.disabled = false;
+      if (actualSizeBtn) {
+        actualSizeBtn.disabled = false;
+        actualSizeBtn.textContent = 'Actual size (' + state.width + '×' + state.height + ')';
+        actualSizeBtn.title = 'View at ' + state.width + '×' + state.height;
+      }
     }
 
     function setupToggles() {
       const container = document.getElementById('toggles');
-      const row = document.createElement('div');
-      row.className = 'toggles-row';
+      const row1 = document.createElement('div');
+      row1.className = 'toggles-row';
+      const row2 = document.createElement('div');
+      row2.className = 'toggles-row';
+      const r1 = ['autoplay', 'loop', 'muted'];
+      const r2 = ['controls', 'fullscreen'];
       OPTIONS.forEach(({ key, label }) => {
+        const row = r1.includes(key) ? row1 : row2;
         const el = document.createElement('button');
         el.type = 'button';
         el.className = 'toggle' + (state.options[key] ? ' on' : '');
@@ -566,7 +750,8 @@
         });
         row.appendChild(el);
       });
-      container.appendChild(row);
+      container.appendChild(row1);
+      container.appendChild(row2);
     }
 
     document.getElementById('input').addEventListener('input', (e) => {
@@ -575,6 +760,83 @@
       state.hash = hash;
       render();
     });
+
+    const embedWidthEl = document.getElementById('embedWidth');
+    const embedHeightEl = document.getElementById('embedHeight');
+    const lockAspectBtn = document.getElementById('lockAspectBtn');
+
+    function syncSizeFromInputs() {
+      if (state.lockAspect) {
+        const w = clampWidth(embedWidthEl.value);
+        state.width = w;
+        state.height = heightFromWidth(w);
+        embedWidthEl.value = state.width;
+        embedHeightEl.value = state.height;
+      } else {
+        state.width = clampWidth(embedWidthEl.value);
+        state.height = clampHeight(embedHeightEl.value);
+        embedWidthEl.value = state.width;
+        embedHeightEl.value = state.height;
+      }
+      render();
+    }
+
+    if (embedWidthEl) {
+      embedWidthEl.addEventListener('input', () => {
+        if (state.lockAspect) {
+          state.width = clampWidth(embedWidthEl.value);
+          state.height = heightFromWidth(state.width);
+          embedWidthEl.value = state.width;
+          embedHeightEl.value = state.height;
+        } else {
+          state.width = clampWidth(embedWidthEl.value);
+          embedWidthEl.value = state.width;
+        }
+        render();
+      });
+      embedWidthEl.addEventListener('change', () => { syncSizeFromInputs(); });
+    }
+    if (embedHeightEl) {
+      embedHeightEl.addEventListener('input', () => {
+        if (state.lockAspect) {
+          state.height = clampHeight(embedHeightEl.value);
+          state.width = widthFromHeight(state.height);
+          embedHeightEl.value = state.height;
+          embedWidthEl.value = state.width;
+        } else {
+          state.height = clampHeight(embedHeightEl.value);
+          embedHeightEl.value = state.height;
+        }
+        render();
+      });
+      embedHeightEl.addEventListener('change', () => { syncSizeFromInputs(); });
+    }
+
+    if (lockAspectBtn) {
+      lockAspectBtn.addEventListener('click', () => {
+        state.lockAspect = !state.lockAspect;
+        lockAspectBtn.classList.toggle('on', state.lockAspect);
+        lockAspectBtn.setAttribute('aria-pressed', state.lockAspect);
+        const lockIcon = lockAspectBtn.querySelector('.lock-icon');
+        const unlockIcon = lockAspectBtn.querySelector('.unlock-icon');
+        if (lockIcon && unlockIcon) {
+          lockIcon.style.display = state.lockAspect ? '' : 'none';
+          unlockIcon.style.display = state.lockAspect ? 'none' : '';
+        }
+        lockAspectBtn.title = state.lockAspect ? 'Lock 16:9 aspect ratio' : 'Unlock aspect ratio';
+        render();
+      });
+    }
+
+    const sizeInCodeBtn = document.getElementById('sizeInCodeBtn');
+    if (sizeInCodeBtn) {
+      sizeInCodeBtn.addEventListener('click', () => {
+        state.includeSizeInCode = !state.includeSizeInCode;
+        sizeInCodeBtn.classList.toggle('on', state.includeSizeInCode);
+        sizeInCodeBtn.title = state.includeSizeInCode ? 'Include width & height in embed code (off = responsive 100%)' : 'Responsive embed (100% size in code)';
+        render();
+      });
+    }
 
     document.getElementById('copyBtn').addEventListener('click', () => {
       const code = document.getElementById('code').textContent;
@@ -589,6 +851,7 @@
 
     const actualSizeBtn = document.getElementById('actualSizeBtn');
     const actualSizeModal = document.getElementById('actualSizeModal');
+    const actualSizeModalInner = document.getElementById('actualSizeModalInner');
     const actualSizeIframe = document.getElementById('actualSizeIframe');
     const actualSizeClose = document.getElementById('actualSizeClose');
 
@@ -597,6 +860,10 @@
         const src = buildSrc();
         if (!src) return;
         actualSizeIframe.src = src;
+        if (actualSizeModalInner) {
+          actualSizeModalInner.style.width = state.width + 'px';
+          actualSizeModalInner.style.height = state.height + 'px';
+        }
         actualSizeModal.classList.add('open');
         actualSizeModal.setAttribute('aria-hidden', 'false');
       });
