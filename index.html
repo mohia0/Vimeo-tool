@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Vimeo Embed Editor — For Behance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Dancing+Script:wght@500&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg: #191919;
@@ -25,7 +28,9 @@
       --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -101,24 +106,26 @@
       align-items: stretch;
     }
 
-    .layout > aside.panel {
+    .layout>aside.panel {
       display: flex;
       flex-direction: column;
       min-height: 0;
     }
 
-    .layout > aside.panel .panel-head,
-    .layout > aside.panel .input-wrap {
+    .layout>aside.panel .panel-head,
+    .layout>aside.panel .input-wrap {
       flex-shrink: 0;
     }
 
-    .layout > aside.panel .toggles-wrap {
+    .layout>aside.panel .toggles-wrap {
       flex: 1;
       min-height: 0;
     }
 
     @media (max-width: 700px) {
-      .layout { grid-template-columns: 1fr; }
+      .layout {
+        grid-template-columns: 1fr;
+      }
     }
 
     .code-section {
@@ -655,8 +662,60 @@
     .app-footer a:hover {
       color: var(--accent-hover);
     }
+
+    /* Photoshop-like checkerboard background */
+    .bg-checkerboard {
+      background-color: #fff;
+      background-image:
+        linear-gradient(45deg, #eee 25%, transparent 25%),
+        linear-gradient(-45deg, #eee 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #eee 75%),
+        linear-gradient(-45deg, transparent 75%, #eee 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    /* Grey background for video iframe/container */
+    .video-bg-grey {
+      background-color: #ddd;
+      /* Visible if video hasn't loaded or has transparency */
+    }
+
+    /* Red dashed border */
+    .dashed-border {
+      border: 2px dashed #ff0000;
+      box-sizing: border-box;
+      /* Ensure border is included in size or sits around it */
+    }
+
+    .refresh-btn {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-soft);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .refresh-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .refresh-btn svg {
+      width: 14px;
+      height: 14px;
+    }
   </style>
 </head>
+
 <body>
   <div class="app">
     <header class="header">
@@ -673,7 +732,8 @@
       <aside class="panel">
         <div class="panel-head">Video</div>
         <div class="input-wrap" id="inputWrap">
-          <input type="text" id="input" placeholder="https://vimeo.com/1051366301 or 1051366301" autocomplete="off" aria-describedby="inputError">
+          <input type="text" id="input" placeholder="https://vimeo.com/1051366301 or 1051366301" autocomplete="off"
+            aria-describedby="inputError">
           <p class="input-error" id="inputError" role="alert">Enter a valid Vimeo URL or video ID.</p>
         </div>
         <div class="panel-head">Options</div>
@@ -682,13 +742,24 @@
           <div class="options-sep" aria-hidden="true"></div>
           <div class="size-controls">
             <div class="size-header">
-              <button type="button" class="lock-btn on" id="lockAspectBtn" title="Lock 16:9 aspect ratio" aria-pressed="true">
-                <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11V7a5 5 0 0110 0v4M5 11h14a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7a1 1 0 011-1z"/></svg>
-                <svg class="unlock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a1 1 0 001-1v-7a1 1 0 00-1-1H5a1 1 0 00-1 1v7a1 1 0 001 1z"/></svg>
+              <button type="button" class="lock-btn on" id="lockAspectBtn" title="Lock 16:9 aspect ratio"
+                aria-pressed="true">
+                <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 11V7a5 5 0 0110 0v4M5 11h14a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1v-7a1 1 0 011-1z" />
+                </svg>
+                <svg class="unlock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  style="display:none;">
+                  <path
+                    d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a1 1 0 001-1v-7a1 1 0 00-1-1H5a1 1 0 00-1 1v7a1 1 0 001 1z" />
+                </svg>
               </button>
               <label>Lock</label>
-              <button type="button" class="reset-size-btn" id="resetSizeBtn" title="Reset size to 1080×630" aria-label="Reset size">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+              <button type="button" class="reset-size-btn" id="resetSizeBtn" title="Reset size to 1080×630"
+                aria-label="Reset size">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 4v6h6M23 20v-6h-6" />
+                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
+                </svg>
               </button>
             </div>
             <div class="size-fields">
@@ -702,7 +773,8 @@
                 <input type="number" id="embedHeight" min="180" max="2160" step="1" value="630">
               </div>
             </div>
-            <button type="button" class="size-code-toggle on" id="sizeInCodeBtn" title="Include width & height in embed code (off = responsive 100%)">In code</button>
+            <button type="button" class="size-code-toggle on" id="sizeInCodeBtn"
+              title="Include width & height in embed code (off = responsive 100%)">In code</button>
           </div>
         </div>
       </aside>
@@ -711,17 +783,29 @@
         <div class="panel preview-wrap">
           <div class="panel-head preview-head">
             <span>Preview</span>
-            <button type="button" class="actual-size-btn" id="actualSizeBtn" disabled title="View at actual size">Actual size</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button type="button" class="refresh-btn" id="refreshBtn" title="Refresh preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M23 4v6h-6"></path>
+                  <path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+              </button>
+              <button type="button" class="actual-size-btn" id="actualSizeBtn" disabled
+                title="View at actual size">Actual size</button>
+            </div>
           </div>
-          <div class="preview" id="preview">
+          <div class="preview bg-checkerboard" id="preview">
             <div class="preview-placeholder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                <path
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
               <span class="placeholder-text">Add a Vimeo URL or video ID</span>
             </div>
             <div class="preview-loading" aria-live="polite">Loading…</div>
-            <iframe id="previewIframe" style="display:none;"></iframe>
+            <iframe id="previewIframe" class="video-bg-grey dashed-border" style="display:none;"></iframe>
           </div>
         </div>
       </main>
@@ -739,14 +823,17 @@
   </div>
 
   <footer class="app-footer">
-    Made with love by <a href="https://mohihassan.com" target="_blank" rel="noopener noreferrer" class="footer-name">MOHI HASSAN</a>
+    Made with love by <a href="https://mohihassan.com" target="_blank" rel="noopener noreferrer"
+      class="footer-name">MOHI HASSAN</a>
   </footer>
 
   <div class="actual-size-modal" id="actualSizeModal" aria-hidden="true">
-    <div class="modal-inner" id="actualSizeModalInner">
-      <iframe id="actualSizeIframe" title="Video at actual size"></iframe>
+    <div class="modal-inner bg-checkerboard" id="actualSizeModalInner">
+      <iframe id="actualSizeIframe" class="video-bg-grey dashed-border" title="Video at actual size"></iframe>
       <button type="button" class="modal-close" id="actualSizeClose" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
       </button>
     </div>
   </div>
@@ -856,12 +943,12 @@
         actualSizeBtn.textContent = 'Actual size (' + state.width + '×' + state.height + ')';
         actualSizeBtn.title = 'View at ' + state.width + '×' + state.height;
       }
-      iframe.onload = function() {
+      iframe.onload = function () {
         preview.classList.remove('loading');
         iframe.style.display = 'block';
         iframe.onload = null;
       };
-      iframe.onerror = function() {
+      iframe.onerror = function () {
         preview.classList.remove('loading');
         iframe.style.display = 'block';
       };
@@ -1069,8 +1156,22 @@
       });
     }
 
+    const refreshBtn = document.getElementById('refreshBtn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        const iframe = document.getElementById('previewIframe');
+        if (iframe && iframe.src) {
+          // Temporarily remove src to force reload or just re-assign
+          const currentSrc = iframe.src;
+          iframe.src = '';
+          setTimeout(() => { iframe.src = currentSrc; }, 10);
+        }
+      });
+    }
+
     setupToggles();
     render();
   </script>
 </body>
+
 </html>
